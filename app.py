@@ -3,10 +3,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 import config
-from src.service_layer import services
+from src.adapters import orm, repository
 from src.domain import model
-from src.adapters import repository, orm
-from src.adapters.orm import batches
+from src.service_layer import services
 from src.service_layer.services import is_valid_sku
 
 orm.start_mappers()
@@ -24,7 +23,7 @@ def allocate_endpoint():
         request.json["qty"],
     )
 
-    if not is_valid_sku(line.sku, batches):
+    if not is_valid_sku(line.sku, repo.list()):
         return jsonify({"message": f"Invalid sku {line.sku}"}), 400
 
     try:

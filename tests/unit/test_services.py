@@ -1,8 +1,8 @@
 import pytest
 
-from src.service_layer import services
-from src.domain import model
 from src.adapters.repository import FakeRepository
+from src.domain import model
+from src.service_layer import services
 
 
 class FakeSession:
@@ -29,8 +29,8 @@ def test_error_for_invalid_sku():
 
 
 def test_commits():
-    line = model.OrderLine('o1', 'OMINOUS-MIRROR', 10)
-    batch = model.Batch('b1', 'OMINOUS-MIRROR', 100, eta=None)
+    line = model.OrderLine("o1", "OMINOUS-MIRROR", 10)
+    batch = model.Batch("b1", "OMINOUS-MIRROR", 100, eta=None)
     repo = FakeRepository([batch])
     session = FakeSession()
     services.allocate(line, repo, session)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from src.domain import model
 from src.adapters.repository import AbstractRepository
+from src.domain import model
 
 
 class InvalidSku(Exception):
