@@ -7,7 +7,7 @@ class OutOfStock(Exception):
     pass
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class OrderLine:
     orderid: str
     sku: str
@@ -30,10 +30,13 @@ class Batch:
     def __hash__(self):
         return hash(self.reference)
 
+    def __repr__(self):
+        return f"<Batch {self.reference}>"
+
     def __gt__(self, other):
         if self.eta is None:
             return False
-        if other is None:
+        if other is None or other.eta is None:
             return True
         return self.eta > other.eta
 
