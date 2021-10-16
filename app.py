@@ -1,4 +1,6 @@
-from flask import Flask, jsonify, request
+from datetime import datetime
+
+from flask import Flask, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -6,7 +8,6 @@ import config
 from src.adapters import orm, repository
 from src.domain import model
 from src.service_layer import services
-from src.service_layer.services import is_valid_sku
 
 orm.start_mappers()
 get_session = sessionmaker(bind=create_engine(config.get_postgres_uri()))
@@ -17,20 +18,33 @@ app = Flask(__name__)
 def allocate_endpoint():
     session = get_session()
     repo = repository.SqlAlchemyRepository(session)
-    line = model.OrderLine(
-        request.json["orderid"],
+    try:
+        batchref = services.allocate(
+            request.json["orderid"],
+            request.json["sku"],
+            request.json["qty"],
+            repo,
+            session,
+        )
+    except (model.OutOfStock, services.InvalidSku) as e:
+        return {"message": str(e)}, 400
+
+    return {"batchref": batchref}, 201
+
+
+@app.route("/add_batch", methods=["POST"])
+def add_batch():
+    session = get_session()
+    repo = repository.SqlAlchemyRepository(session)
+    eta = request.json["eta"]
+    if eta is not None:
+        eta = datetime.fromisoformat(eta).date()
+    batch_data = (
+        request.json["ref"],
         request.json["sku"],
         request.json["qty"],
+        eta,
+        repo,
     )
-
-    if not is_valid_sku(line.sku, repo.list()):
-        return jsonify({"message": f"Invalid sku {line.sku}"}), 400
-
-    try:
-        batchref = services.allocate(line, repo, session)
-    except (model.OutOfStock, services.InvalidSku) as e:
-        return jsonify({"message": str(e)}), 400
-
-    session.commit()
-
-    return jsonify({"batchref": batchref}), 201
+    services.add_batch(*batch_data, session=session)
+    return "OK", 201

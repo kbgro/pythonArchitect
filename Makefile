@@ -2,7 +2,7 @@ test:
 	pytest
 
 app:
-	set FLASK_APP=app.py
-	set FLASK_DEBUG=1
-	set FLASK_ENV=dev
+	export FLASK_APP=app.py
+	export FLASK_DEBUG=1
+	export FLASK_ENV=development
 	flask run --port=15000
