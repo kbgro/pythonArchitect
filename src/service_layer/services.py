@@ -3,9 +3,9 @@ from __future__ import annotations
 from datetime import date
 from typing import Optional
 
-from src.domain import model
+from src.domain import events, model
 from src.domain.model import OrderLine
-from src.service_layer import unit_of_work
+from src.service_layer import messagebus, unit_of_work
 
 
 class InvalidSku(Exception):
@@ -33,10 +33,7 @@ def add_batch(
 
 
 def allocate(
-    orderid: str,
-    sku: str,
-    qty: int,
-    uow: unit_of_work.AbstractUnitOfWork,
+    orderid: str, sku: str, qty: int, uow: unit_of_work.AbstractUnitOfWork
 ) -> str:
     line = OrderLine(orderid, sku, qty)
     with uow:
@@ -45,4 +42,8 @@ def allocate(
             raise InvalidSku(f"Invalid sku {line.sku}")
         batchref = product.allocate(line)
         uow.commit()
-    return batchref
+
+        if batchref is None:
+            messagebus.handle(events.OutOfStock(line.sku))
+
+        return batchref

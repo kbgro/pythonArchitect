@@ -1,15 +1,11 @@
 # pylint: disable=broad-except
-import threading
 import time
 import traceback
-from typing import List
 
 import pytest
 
 from src.domain import model
 from src.service_layer import unit_of_work
-
-from ..random_refs import random_batchref, random_orderid, random_sku
 
 
 def insert_batch(session, ref, sku, qty, eta, product_version=1):
