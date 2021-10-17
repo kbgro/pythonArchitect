@@ -50,9 +50,4 @@ class SqlAlchemyRepository(AbstractRepository):
         return self.session.query(model.Product).filter_by(sku=sku).first()
 
     def _get_by_batchref(self, batchref):
-        return (
-            self.session.query(model.Product)
-            .join(model.Batch)
-            .filter(orm.batches.c.reference == batchref)
-            .first()
-        )
+        return self.session.query(model.Product).join(model.Batch).filter(orm.batches.c.reference == batchref).first()

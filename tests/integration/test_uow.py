@@ -14,8 +14,7 @@ def insert_batch(session, ref, sku, qty, eta, product_version=1):
         dict(sku=sku, version=product_version),
     )
     session.execute(
-        "INSERT INTO batches (reference, sku, _purchased_quantity, eta)"
-        " VALUES (:ref, :sku, :qty, :eta)",
+        "INSERT INTO batches (reference, sku, _purchased_quantity, eta)" " VALUES (:ref, :sku, :qty, :eta)",
         dict(ref=ref, sku=sku, qty=qty, eta=eta),
     )
 
@@ -26,8 +25,7 @@ def get_allocated_batch_ref(session, orderid, sku):
         dict(orderid=orderid, sku=sku),
     )
     [[batchref]] = session.execute(
-        "SELECT b.reference FROM allocations JOIN batches AS b ON batch_id = b.id"
-        " WHERE orderline_id=:orderlineid",
+        "SELECT b.reference FROM allocations JOIN batches AS b ON batch_id = b.id" " WHERE orderline_id=:orderlineid",
         dict(orderlineid=orderlineid),
     )
     return batchref

@@ -56,12 +56,8 @@ class TestAddBatch:
 class TestAllocate:
     def test_returns_allocation(self):
         uow = FakeUnitOfWork()
-        messagebus.handle(
-            events.BatchCreated("batch1", "COMPLICATED-LAMP", 100, None), uow
-        )
-        results = messagebus.handle(
-            events.AllocationRequired("o1", "COMPLICATED-LAMP", 10), uow
-        )
+        messagebus.handle(events.BatchCreated("batch1", "COMPLICATED-LAMP", 100, None), uow)
+        results = messagebus.handle(events.AllocationRequired("o1", "COMPLICATED-LAMP", 10), uow)
         assert results.pop(0) == "batch1"
 
     def test_errors_for_invalid_sku(self):
@@ -69,9 +65,7 @@ class TestAllocate:
         messagebus.handle(events.BatchCreated("b1", "AREALSKU", 100, None), uow)
 
         with pytest.raises(handlers.InvalidSku, match="Invalid sku NONEXISTENTSKU"):
-            messagebus.handle(
-                events.AllocationRequired("o1", "NONEXISTENTSKU", 10), uow
-            )
+            messagebus.handle(events.AllocationRequired("o1", "NONEXISTENTSKU", 10), uow)
 
     def test_commits(self):
         uow = FakeUnitOfWork()
@@ -84,20 +78,14 @@ class TestAllocate:
         messagebus.handle(events.BatchCreated("b1", "POPULAR-CURTAINS", 9, None), uow)
 
         with mock.patch("src.adapters.email.send") as mock_send_mail:
-            messagebus.handle(
-                events.AllocationRequired("o1", "POPULAR-CURTAINS", 10), uow
-            )
-            assert mock_send_mail.call_args == mock.call(
-                "stock@made.com", "Out of stock for POPULAR-CURTAINS"
-            )
+            messagebus.handle(events.AllocationRequired("o1", "POPULAR-CURTAINS", 10), uow)
+            assert mock_send_mail.call_args == mock.call("stock@made.com", "Out of stock for POPULAR-CURTAINS")
 
 
 class TestChangeBatchQuantity:
     def test_changes_available_quantity(self):
         uow = FakeUnitOfWork()
-        messagebus.handle(
-            events.BatchCreated("batch1", "ADORABLE-SETTEE", 100, None), uow
-        )
+        messagebus.handle(events.BatchCreated("batch1", "ADORABLE-SETTEE", 100, None), uow)
         [batch] = uow.products.get(sku="ADORABLE-SETTEE").batches
         assert batch.available_quantity == 100
 

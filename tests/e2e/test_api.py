@@ -8,9 +8,7 @@ from ..random_refs import random_batchref, random_orderid, random_sku
 
 def post_to_add_batch(ref, sku, qty, eta):
     url = config.get_api_url()
-    r = requests.post(
-        f"{url}/add_batch", json={"ref": ref, "sku": sku, "qty": qty, "eta": eta}
-    )
+    r = requests.post(f"{url}/add_batch", json={"ref": ref, "sku": sku, "qty": qty, "eta": eta})
     assert r.status_code == 201
 
 

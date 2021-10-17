@@ -16,14 +16,10 @@ logger = logging.getLogger(__file__)
 Message = Union[commands.Command, events.Event]
 
 
-def handle_event(
-    event: events.Event, queue: List[Message], uow: unit_of_work.AbstractUnitOfWork
-):
+def handle_event(event: events.Event, queue: List[Message], uow: unit_of_work.AbstractUnitOfWork):
     for handler in EVENT_HANDLERS[type(event)]:
         try:
-            for attempt in Retrying(
-                stop=stop_after_attempt(3), wait=wait_exponential()
-            ):
+            for attempt in Retrying(stop=stop_after_attempt(3), wait=wait_exponential()):
                 with attempt:
                     logger.debug("handling event %s with handler %s", event, handler)
                     handler(event, uow=uow)
