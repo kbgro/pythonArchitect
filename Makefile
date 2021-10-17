@@ -1,8 +1,10 @@
+.EXPORT_ALL_VARIABLES:
+FLASK_APP=app.py
+FLASK_DEBUG=1
+FLASK_ENV=development
+
 test:
 	pytest
 
 app:
-	export FLASK_APP=app.py
-	export FLASK_DEBUG=1
-	export FLASK_ENV=development
 	flask run --port=15000
