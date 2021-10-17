@@ -42,9 +42,7 @@ class FakeUnitOfWork(unit_of_work.AbstractUnitOfWork):
 class TestAddBatch:
     def test_for_new_product(self):
         uow = FakeUnitOfWork()
-        messagebus.handle(
-            events.BatchCreated("b1", "CRUNCHY-ARMCHAIR", 100, None), uow
-        )
+        messagebus.handle(events.BatchCreated("b1", "CRUNCHY-ARMCHAIR", 100, None), uow)
         assert uow.products.get("CRUNCHY-ARMCHAIR") is not None
         assert uow.committed
 
@@ -90,7 +88,7 @@ class TestAllocate:
                 events.AllocationRequired("o1", "POPULAR-CURTAINS", 10), uow
             )
             assert mock_send_mail.call_args == mock.call(
-                "stock@made.com", f"Out of stock for POPULAR-CURTAINS"
+                "stock@made.com", "Out of stock for POPULAR-CURTAINS"
             )
 
 
