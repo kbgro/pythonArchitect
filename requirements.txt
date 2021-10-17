@@ -16,8 +16,10 @@ py==1.10.0
 pyparsing==2.4.7
 pytest==6.2.5
 python-dotenv==0.19.1
+redis==3.5.3
 requests==2.26.0
 SQLAlchemy==1.4.25
+tenacity==8.0.1
 toml==0.10.2
 urllib3==1.26.7
 Werkzeug==2.0.2

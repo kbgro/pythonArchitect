@@ -18,3 +18,9 @@ def get_api_url():
     host = os.environ.get("API_HOST")
     port = os.environ.get("API_PORT")
     return f"http://{host}:{port}"
+
+
+def get_redis_host_and_port():
+    host = os.environ.get("REDIS_HOST")
+    port = os.environ.get("REDIS_PORT")
+    return dict(host=host, port=port)
