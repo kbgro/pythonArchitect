@@ -38,6 +38,7 @@ def handle_command(
     uow: unit_of_work.AbstractUnitOfWork,
 ):
     logger.info("handling command %s", command)
+    print("handling command %s", command)
     try:
         handler = COMMAND_HANDLERS[type(command)]
         result = handler(command, uow)

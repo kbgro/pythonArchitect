@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import List, Optional, Set
 
-from . import events
+from . import commands, events
 
 
 class OutOfStock(Exception):
@@ -75,7 +75,7 @@ class Product:
         self.version_number = version_number
         self.events = []  # type: List[events.Event]
 
-    def allocate(self, line: OrderLine) -> str:
+    def allocate(self, line: OrderLine) -> Optional[str]:
         try:
             batch = next(b for b in sorted(self.batches) if b.can_allocate(line))
             batch.allocate(line)
@@ -98,7 +98,7 @@ class Product:
         batch._purchased_quantity = qty
         while batch.available_quantity < 0:
             line = batch.deallocate_one()
-            self.events.append(events.AllocationRequired(line.orderid, line.sku, line.qty))
+            self.events.append(commands.Allocate(line.orderid, line.sku, line.qty))
 
 
 def allocate(line: OrderLine, batches: List[Batch]) -> str:

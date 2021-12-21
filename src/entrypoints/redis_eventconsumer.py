@@ -23,7 +23,8 @@ def main():
 
 
 def handle_change_batch_quantity(m):
-    logging.debug("handling %s", m)
+    logging.info("handling %s", m)
+    print("handle_change_batch_quantity ---  %s", m)
     data = json.loads(m["data"])
     cmd = commands.ChangeBatchQuantity(ref=data["batchref"], qty=data["qty"])
     messagebus.handle(cmd, uow=unit_of_work.SqlAlchemyUnitOfWork())
